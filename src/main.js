@@ -10,7 +10,7 @@ const startTimestamp = new Date();
 let eventEmitter = require('events')
 eventEmitter = new eventEmitter()
 
-const {app, Tray, Menu} = require('electron')
+const {app, Tray, Menu, ipcMain} = require('electron')
 const storage = require('./storage')
 const touchbar = require('./touchbar')(__dirname, eventEmitter)
 const browsers = require('./browsers')(__dirname, storage, {touchbar, eventEmitter})
@@ -93,35 +93,26 @@ let setMenu = () => {
   Menu.setApplicationMenu(Menu.buildFromTemplate(template))
 }
 
-const setActivity = async () => {
+const setActivity = async color => {
   if (!rpc) return
 
-  rpc.setActivity({
-    details: `Find new colors`,
-    state: '#334455',
+  console.log(color)
+
+  const activity = {
+    details: `Finding new colors`,
+    state: color ? color : storage.get('lastColor') ? storage.get('lastColor') : '#00AEEF',
     startTimestamp,
     largeImageKey: 'colorpicker-dark',
-    smallImageKey: 'orange',
-    spectateSecret: '#334455',
+    spectateSecret: color,
     instance: false,
-  })
+  }
+
+  if(color) activity.smallImageKey = 'blue'
+
+  rpc.setActivity(activity)
 }
 
-rpc.on('ready', () => {
-  setActivity()
 
-  rpc.subscribe('ACTIVITY_JOIN', evt => {
-    console.log()
-  })
-
-  setInterval(() => {
-    setActivity()
-  }, 15e3);
-})
-
-
-
-rpc.login({ clientId }).catch(console.error);
 
 /**
 * [App ready - On app ready]
@@ -131,6 +122,23 @@ app.on('ready', () => {
     createTray()
     setMenu()
     colorpicker.init()
+
+    rpc.on('ready', () => {
+      setActivity()
+    
+      rpc.subscribe('ACTIVITY_JOIN', evt => {
+        if(!evt.data.secret) return;
+    
+        colorpicker.getWindow().webContents.send('changeColor', evt.data.secret);
+        colorpicker.getWindow().focus();
+      })
+    
+      ipcMain.on('changeLastColor', (_, color) => setActivity(color))
+    })
+    
+    
+    
+    rpc.login({ clientId }).catch(console.error);
   })
 })
 
