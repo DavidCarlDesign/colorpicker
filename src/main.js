@@ -1,5 +1,12 @@
 'use strict'
 
+const discord = require('discord-rpc')
+
+const clientId = '586278446087405609';
+discord.register(clientId);
+const rpc = new discord.Client({ transport: 'ipc' });
+const startTimestamp = new Date();
+
 let eventEmitter = require('events')
 eventEmitter = new eventEmitter()
 
@@ -85,6 +92,36 @@ let setMenu = () => {
   ]
   Menu.setApplicationMenu(Menu.buildFromTemplate(template))
 }
+
+const setActivity = async () => {
+  if (!rpc) return
+
+  rpc.setActivity({
+    details: `Find new colors`,
+    state: '#334455',
+    startTimestamp,
+    largeImageKey: 'colorpicker-dark',
+    smallImageKey: 'orange',
+    spectateSecret: '#334455',
+    instance: false,
+  })
+}
+
+rpc.on('ready', () => {
+  setActivity()
+
+  rpc.subscribe('ACTIVITY_JOIN', evt => {
+    console.log()
+  })
+
+  setInterval(() => {
+    setActivity()
+  }, 15e3);
+})
+
+
+
+rpc.login({ clientId }).catch(console.error);
 
 /**
 * [App ready - On app ready]
