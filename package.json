@@ -1,70 +1,66 @@
 {
     "name": "colorpicker",
     "productName": "colorpicker",
-    "version": "2.0.4",
-    "description": "Colorpicker is a little Electron app that can show colors with hex/rgb code, and generate shading for your color.",
-    "main": "src/main.js",
-    "scripts": {
-        "start": "npx electron src/main.js",
-        "standard": "standard",
-        "pack": "electron-builder --dir",
-        "publish": "snapcraft push --release=stable *.snap",
-        "release": "electron-builder --publish=never --config colorpicker-build.json",
-        "release-linux": "electron-builder --publish=never --config colorpicker-build.json --linux deb appImage",
-        "release-snap": "snapcraft snap",
-        "release-window": "electron-builder --publish=never --config colorpicker-build.json --win nsis portable",
-        "nightly": "electron-builder --publish=never --config colorpicker-build-nightly.json",
-        "nightly-linux": "electron-builder --publish=never --config colorpicker-build-nightly.json --linux deb appImage",
-        "rebuild": "npm rebuild --runtime=electron --target=8.2.1 --disturl=https://atom.io/download/electron --abi=76"
-    },
-    "repository": "https://github.com/toinane/colorpicker",
+    "version": "3.0.0",
+    "description": "Colorpicker is a desktop tool with Electron to get and save colors code quickly for OSX, Windows and Linux!",
+    "main": "dist/main.js",
+    "repository": "git@github.com:Toinane/new-colorpicker.git",
     "keywords": [
         "Colorpicker",
-        "colors",
-        "code",
-        "shading",
-        "picker",
-        "Toinane",
-        "Crea-THAT",
-        "crea-that"
+        "Colors",
+        "Picker",
+        "Eyedropper",
+        "Shades",
+        "Tints",
+        "RGB",
+        "HSL"
     ],
-    "dependencies": {
-        "discord-rpc": "^3.1.1",
-        "electron-json-storage": "^4.1.8",
-        "request": "^2.88.2",
-        "robotjs": "git+https://github.com/Toinane/robotjs",
-        "sortablejs": "^1.10.2",
-        "tippy.js": "^6.1.1"
-    },
-    "optionalDependencies": {
-        "osx-mouse": "git+https://github.com/Toinane/osx-mouse",
-        "win-mouse": "git+https://github.com/Toinane/win-mouse",
-        "iohook": "^0.6.5"
-    },
-    "devDependencies": {
-        "electron": "8.2.1",
-        "electron-builder": "22.4.1",
-        "minimist": "^1.2.5",
-        "standard": "14.3.3"
+    "os": [
+        "win32",
+        "darwin",
+        "linux"
+    ],
+    "engines": {
+        "node": ">=12"
     },
     "author": {
         "name": "Toinane",
-        "email": "toinane@crea-that.fr",
         "url": "https://toinane.crea-th.at"
     },
     "bugs": "https://github.com/toinane/colorpicker/issues",
     "homepage": "https://colorpicker.fr",
-    "license": "GPL-3.0",
-    "iohook": {
-        "targets": [
-            "electron-76"
-        ],
-        "platforms": [
-            "linux"
-        ],
-        "arches": [
-            "x64",
-            "ia32"
-        ]
+    "license": "CECILL-2.1",
+    "scripts": {
+        "dev:electron": "NODE_ENV=development webpack --config ./scripts/webpack.electron.config.js --mode development && electron ./dist/main.js",
+        "dev:react": "NODE_ENV=development webpack-dev-server --config ./scripts/webpack.react.config.js --mode development",
+        "build": "rm -rf ./dist && webpack --config ./scripts/webpack.electron.config.js --mode production",
+        "release": "node scripts/build-release.js",
+        "nightly": "node scripts/build-nightly.js"
+    },
+    "dependencies": {
+        "i18next": "^19.4.4",
+        "react": "^16.13.1",
+        "react-dom": "^16.13.1"
+    },
+    "devDependencies": {
+        "@types/react": "^16.9.41",
+        "@types/react-dom": "^16.9.8",
+        "@typescript-eslint/eslint-plugin": "^2.32.0",
+        "@typescript-eslint/parser": "^2.32.0",
+        "css-loader": "^3.6.0",
+        "electron": "^8.2.5",
+        "electron-builder": "^22.6.0",
+        "eslint": "^7.0.0",
+        "eslint-plugin-react": "^7.19.0",
+        "html-webpack-plugin": "^4.3.0",
+        "source-map-loader": "^0.2.4",
+        "style-loader": "^1.2.1",
+        "svg-url-loader": "^6.0.0",
+        "ts-loader": "^7.0.5",
+        "tslint-config-security": "^1.16.0",
+        "typescript": "^3.8.3",
+        "webpack": "^4.43.0",
+        "webpack-cli": "^3.3.11",
+        "webpack-dev-server": "^3.11.0"
     }
 }
